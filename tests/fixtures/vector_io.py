@@ -473,6 +473,18 @@ def get_pgvector_deployment_template() -> dict[str, Any]:
                         },
                         {"name": "PGDATA", "value": "/var/lib/postgresql/data/pgdata"},
                     ],
+                    "lifecycle": {
+                        "postStart": {
+                            "exec": {
+                                "command": [
+                                    "/bin/sh",
+                                    "-c",
+                                    "sleep 5 && psql -h localhost -U $POSTGRES_USER"
+                                    ' -d $POSTGRES_DB -c "CREATE EXTENSION IF NOT EXISTS vector;" || true',
+                                ]
+                            }
+                        }
+                    },
                     "volumeMounts": [{"name": "pgdata", "mountPath": "/var/lib/postgresql/data"}],
                 }
             ],
